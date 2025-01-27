@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px; /* Set the width */
+    height: 8px; /* Set the height */
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.5); /* Visible scrollbar thumb */
+    border-radius: 4px; /* Rounded corners */
+    border: none; /* Remove border */
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background-color: transparent; /* Transparent background */
+  }
+}
