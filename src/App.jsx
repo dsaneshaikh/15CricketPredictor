@@ -3,14 +3,19 @@ import Header from "./Components/Header/Header";
 import Footer from "./Components/Footer/Footer";
 import dataService from "./services/config";
 import { Outlet } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { predictionDispatch } from "./store/predictionSlice";
+import { feedDispatch } from "./store/feedSlice";
 
 function App() {
-  // useEffect(() => {
-  //   dataService
-  //     .getFeed()
-  //     .then((response) => console.log(response.data.value.length))
-  //     .catch((e) => console.log(e));
-  // }, []);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dataService
+      .getPrediction()
+      .then((response) => dispatch(predictionDispatch(response.data.value)))
+      .catch((e) => console.log(e));
+  });
 
   return (
     <>

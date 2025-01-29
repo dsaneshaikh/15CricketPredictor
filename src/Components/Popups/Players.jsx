@@ -1,28 +1,73 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import Tabs from "../Tabs";
 import conf from "../../conf/conf";
+import { useDispatch, useSelector } from "react-redux";
+import { feedShowPopup } from "../../store/feedSlice";
+import { use } from "react";
+import dataService from "../../services/config";
+import { predictionDispatch } from "../../store/predictionSlice";
+function Players({ questionId }) {
+  const matchId = useSelector((state) => state.feed.popupMatchId);
+  const [savePrediction, setSavePrediction] = useState(false);
 
-function Players({
-  question,
-  showPopup,
-  teamAId,
-  teamBId,
-  teamAName,
-  teamBName,
-}) {
+  const { teamAName, teamBName, teamAId, teamBId, questions } = useSelector(
+    (state) =>
+      state.feed.feedData.filter((match) => match.matchId === matchId)[0]
+  );
   const [activeTab, setActiveTab] = useState(teamAId);
   const [selectedPlayer, setSelectedPlayer] = useState(null);
 
+  const question = questions.filter(
+    (question) => question.questionId === parseInt(questionId)
+  );
+
+  const dispatch = useDispatch();
+
   // Close popup handler
   const closePopup = () => {
-    showPopup(false);
+    dispatch(feedShowPopup(false));
   };
 
   // Handle player selection
   const handlePlayerSelect = (playerId) => {
     setSelectedPlayer((prev) => (prev === playerId ? null : playerId));
+    setSavePrediction(true);
   };
+
+  const selectedPlayerId = useSelector(
+    (state) =>
+      state.prediction.userPredictions
+        .find((prediction) => prediction.matchId === matchId)
+        ?.questions.find(
+          (question) => question.questionId === parseInt(questionId)
+        )?.optionId
+  );
+
+  useEffect(() => {
+    setSelectedPlayer(selectedPlayerId);
+
+    console.log(selectedPlayerId, questionId);
+  }, [selectedPlayerId]);
+
+  // Save prediction
+
+  useEffect(() => {
+    if (savePrediction && selectedPlayer !== null) {
+      dataService
+        .savePrediction(matchId, questionId, selectedPlayer)
+        .then((response) => {
+          setSavePrediction(false);
+          if (response) {
+            dataService.getPrediction().then((response) => {
+              if (response) {
+                dispatch(predictionDispatch(response.data.value));
+              }
+            });
+          }
+        });
+    }
+  }, [savePrediction, selectedPlayer]);
 
   // Popup content JSX
   const popupContent = (

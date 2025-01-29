@@ -4,6 +4,8 @@ class Service {
   url;
   feed;
   countries;
+  savePredictionUrl;
+  getPredictionUrl;
   assets;
   teams;
   login;
@@ -12,6 +14,8 @@ class Service {
     this.url = conf.cricketurl;
     this.feed = conf.feed;
     this.countries = conf.countries;
+    this.savePredictionUrl = conf.savePrediction;
+    this.getPredictionUrl = conf.getPrediction;
     this.assets = conf.assets;
     this.teams = conf.teams;
     this.login = conf.login;
@@ -104,16 +108,58 @@ class Service {
     }
   }
 
+  async savePrediction(matchId, questionId, optionId) {
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        matchId,
+        questionId,
+        optionId,
+      }),
+      credentials: "include",
+    };
+
+    try {
+      const res = await fetch(`${this.url}${this.savePredictionUrl}`, options);
+      if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+      return await res.json();
+    } catch (error) {
+      console.error("Error in savePrediction:", error);
+      throw error;
+    }
+  }
+
+  async getPrediction(UUID) {
+    const endpoint = this.getPredictionUrl.replace("{UUID}", UUID);
+
+    try {
+      const res = await fetch(`${this.url}${endpoint}`, {
+        method: "GET",
+        credentials: "include",
+      });
+
+      // Check for HTTP errors
+      if (!res.ok) {
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
+      const data = await res.json();
+      return data;
+    } catch (error) {
+      console.error("Error in getPrediction:", error);
+      throw error;
+    }
+  }
+
   getTeamImage(teamA, teamB) {
-    let res = [];
-
-    const team1 = res.push(`${this.assets}${this.teams}${teamA}.png`);
-    const team2 = res.push(`${this.assets}${this.teams}${teamB}.png`);
-
-    return res;
+    return [
+      `${this.assets}${this.teams}${teamA}.png`,
+      `${this.assets}${this.teams}${teamB}.png`,
+    ];
   }
 }
-
 const dataService = new Service();
 
 export default dataService;

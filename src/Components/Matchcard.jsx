@@ -3,16 +3,35 @@ import TeamWin from "./Popups/TeamWin";
 import conf from "../conf/conf";
 import dataService from "../services/config";
 import Players from "./Popups/Players";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { feedShowPopup } from "../store/feedSlice";
+import { createSelector } from "@reduxjs/toolkit";
 
-function Matchcard(props) {
-  const [showPopup, setShowPopup] = useState(false);
+function Matchcard({ matchId }) {
   const [day, setDay] = useState(null);
   const [teamsImage, setTeamsImage] = useState(null);
 
-  const matchRedux = useSelector((state) => state.feed);
+  const dispatch = useDispatch();
 
-  console.log(matchRedux);
+  // const selectMatchProps = createSelector(
+  //   (state) => state.feed.feedData,
+  //   (_, matchId) => matchId,
+  //   (feedData, matchId) => feedData.find((match) => match.matchId === matchId)
+  // );
+
+  const feedShowPopupStatus = useSelector(
+    (state) => state.feed.feedShowPopup.popup
+  );
+
+  console.log("feedShowPopupStatus", feedShowPopupStatus);
+
+  const feedShowPopupHandler = (popup, matchId) => {
+    dispatch(feedShowPopup({ popup, matchId }));
+  };
+
+  const props = useSelector((state) =>
+    state.feed.feedData.find((match) => match.matchId === matchId)
+  );
 
   function dateConvertToDay(date) {
     const inidate = date.split("-").reverse().join("-");
@@ -62,7 +81,7 @@ function Matchcard(props) {
       {/* Prediction Section */}
       <div className="mt-4 text-sm">
         <div
-          onClick={() => setShowPopup("1")}
+          onClick={() => feedShowPopupHandler("1", matchId)}
           className="cursor-pointer flex justify-between border-t border-gray-600 border-opacity-50 pt-2 mt-2"
         >
           <p className="font-semibold hover:opacity-85 transition">
@@ -80,7 +99,7 @@ function Matchcard(props) {
           </svg>
         </div>
         <div
-          onClick={() => setShowPopup("2")}
+          onClick={() => feedShowPopupHandler("2", matchId)}
           className="cursor-pointer flex justify-between border-t border-gray-600 border-opacity-50 pt-2 mt-2"
         >
           <p className="font-semibold hover:opacity-85 transition">
@@ -98,7 +117,7 @@ function Matchcard(props) {
           </svg>
         </div>
         <div
-          onClick={() => setShowPopup("3")}
+          onClick={() => feedShowPopupHandler("3", matchId)}
           className="cursor-pointer flex justify-between border-t border-gray-600 border-opacity-50 pt-2 mt-2"
         >
           <p className="font-semibold hover:opacity-85 transition">
@@ -118,30 +137,11 @@ function Matchcard(props) {
       </div>
       {/* Conditional Rendering */}
       {(() => {
-        if (showPopup === "1") {
-          return (
-            <TeamWin
-              showPopup={setShowPopup}
-              teamA={props.teamAName}
-              teamB={props.teamBName}
-              teamAId={props.teamAId}
-              teamBId={props.teamBId}
-            />
-          );
+        if (feedShowPopupStatus === "1") {
+          return <TeamWin matchIdno={matchId} />;
         }
-        if (showPopup) {
-          return (
-            <Players
-              showPopup={setShowPopup}
-              question={props.questions.filter(
-                (question) => question.questionId == showPopup
-              )}
-              teamAId={props.teamAId}
-              teamBId={props.teamBId}
-              teamAName={props.teamAName}
-              teamBName={props.teamBName}
-            />
-          );
+        if (feedShowPopupStatus) {
+          return <Players matchId={matchId} questionId={feedShowPopupStatus} />;
         }
         return null;
       })()}

@@ -11,6 +11,8 @@ function Home() {
   const tabContainerRef = useRef(null);
   const tabRefs = useRef([]);
 
+  console.log("cookie", document.cookie);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -21,8 +23,6 @@ function Home() {
         dispatch(feedDispatch(response.data.value));
       })
       .catch((e) => console.log(e));
-
-    feed && console.log(feed.data.value[0].questions);
   }, []);
 
   useEffect(() => {
@@ -90,7 +90,7 @@ function Home() {
       <div className="grid place-items-center grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 w-full max-w-screen-xl mx-auto">
         {activeTab === 1 &&
           feed?.data?.value?.map((match) => (
-            <Matchcard key={match.matchId} matchID={match.matchId} {...match} />
+            <Matchcard key={match.matchId} matchId={match.matchId} />
           ))}
 
         {activeTab === 2 && (
