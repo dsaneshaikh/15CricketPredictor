@@ -1,42 +1,34 @@
 import React, { useState, useEffect } from "react";
 import TeamWin from "./Popups/TeamWin";
-import conf from "../conf/conf";
 import dataService from "../services/config";
 import Players from "./Popups/Players";
 import { useSelector, useDispatch } from "react-redux";
 import { feedShowPopup } from "../store/feedSlice";
-import { createSelector } from "@reduxjs/toolkit";
+import LiveIndicator from "./LiveIndicator";
 
 function Matchcard({ matchId }) {
+  const props = useSelector((state) =>
+    state.feed.feedData.find((match) => match.matchId === matchId)
+  );
+
+  const [matchStatus, setMatchStatus] = useState(props.matchStatus || 1);
   const [day, setDay] = useState(null);
   const [teamsImage, setTeamsImage] = useState(null);
 
   const dispatch = useDispatch();
 
-  // const selectMatchProps = createSelector(
-  //   (state) => state.feed.feedData,
-  //   (_, matchId) => matchId,
-  //   (feedData, matchId) => feedData.find((match) => match.matchId === matchId)
-  // );
-
   const feedShowPopupStatus = useSelector(
     (state) => state.feed.feedShowPopup.popup
   );
-
-  console.log("feedShowPopupStatus", feedShowPopupStatus);
 
   const feedShowPopupHandler = (popup, matchId) => {
     dispatch(feedShowPopup({ popup, matchId }));
   };
 
-  const props = useSelector((state) =>
-    state.feed.feedData.find((match) => match.matchId === matchId)
-  );
-
   function dateConvertToDay(date) {
     const inidate = date.split("-").reverse().join("-");
-    const dateString = new Date(inidate); // Example date
-    const dayName = dateString.toLocaleDateString("en-US", { weekday: "long" }); // "Monday"
+    const dateString = new Date(inidate);
+    const dayName = dateString.toLocaleDateString("en-US", { weekday: "long" });
     setDay(dayName);
   }
 
@@ -44,14 +36,23 @@ function Matchcard({ matchId }) {
     const teams = dataService.getTeamImage(teamA, teamB);
     setTeamsImage(teams);
   }
+
   useEffect(() => {
     dateConvertToDay(props.matchDate);
-
     TeamsImage(props.teamAId, props.teamBId);
   }, []);
 
   return (
-    <div className="relative flex flex-col w-full max-w-xs p-6 rounded-xl bg-[#0a0b60] shadow-lg">
+    <div
+      className={`${
+        matchStatus !== 1 ? "pointer-events-none " : ""
+      } relative flex flex-col w-full max-w-xs p-6 rounded-xl bg-[#0a0b60] shadow-lg`}
+    >
+      {matchStatus === 2 && (
+        <div className="flex items-center absolute top-0 left-0 p-2">
+          <LiveIndicator />
+        </div>
+      )}
       {/* Team Info */}
       <div className="text-center mb-4">
         <p className="text-sm text-gray-400">
@@ -79,7 +80,7 @@ function Matchcard({ matchId }) {
       </div>
 
       {/* Prediction Section */}
-      <div className="mt-4 text-sm">
+      <div className={`mt-4 text-sm ${matchStatus !== 1 ? "opacity-50" : ""}`}>
         <div
           onClick={() => feedShowPopupHandler("1", matchId)}
           className="cursor-pointer flex justify-between border-t border-gray-600 border-opacity-50 pt-2 mt-2"

@@ -89,15 +89,18 @@ function Home() {
       {/* Matches Section */}
       <div className="grid place-items-center grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 w-full max-w-screen-xl mx-auto">
         {activeTab === 1 &&
-          feed?.data?.value?.map((match) => (
-            <Matchcard key={match.matchId} matchId={match.matchId} />
-          ))}
+          feed?.data?.value
+            ?.filter((match) => match.matchStatus !== 3)
+            .map((match) => (
+              <Matchcard key={match.matchId} matchId={match.matchId} />
+            ))}
 
-        {activeTab === 2 && (
-          <p className="text-center w-full text-gray-400">
-            No past matches available.
-          </p>
-        )}
+        {activeTab === 2 &&
+          feed?.data?.value
+            .filter((match) => match.matchStatus === 3)
+            .map((match) => (
+              <Matchcard key={match.matchId} matchId={match.matchId} />
+            ))}
       </div>
     </div>
   );
