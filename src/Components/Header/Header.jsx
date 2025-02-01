@@ -14,7 +14,7 @@ function Header() {
   return (
     <header className="text-white">
       {/* Top Section */}
-      <div className="bg-gradient-to-r  from-[#0B0F65] via-[#0B1490] to-[#0C17AD] h-16 flex justify-between items-center px-8">
+      <div className="bg-gradient-to-r from-[#0B0F65] via-[#0B1490] to-[#0C17AD] h-16 flex justify-between items-center px-8">
         {/* Logo */}
         <img
           src={`${conf.assets}logo.png`}
@@ -27,7 +27,7 @@ function Header() {
       </div>
 
       {/* Bottom Section (Navigation Links) */}
-      <div className="bg-[#050B4F] h-10 flex items-center justify-center px-8">
+      <div className="bg-[#050B4F] h-10 flex items-center justify-center px-8  ">
         <nav className="flex gap-12 text-base font-medium">
           <NavLink
             to={""}

@@ -25,9 +25,12 @@ const predictionSlice = createSlice({
         });
       }
     },
+    predictionReset: (state) => {
+      state.userPredictions = [];
+    },
   },
 });
 
-export const { predictionDispatch } = predictionSlice.actions;
+export const { predictionDispatch, predictionReset } = predictionSlice.actions;
 
 export default predictionSlice.reducer;

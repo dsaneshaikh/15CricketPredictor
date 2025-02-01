@@ -5,6 +5,7 @@ import Players from "./Popups/Players";
 import { useSelector, useDispatch } from "react-redux";
 import { feedShowPopup } from "../store/feedSlice";
 import LiveIndicator from "./LiveIndicator";
+import LoginPopup from "./Popups/LoginPopup";
 
 function Matchcard({ matchId }) {
   const props = useSelector((state) =>
@@ -14,7 +15,9 @@ function Matchcard({ matchId }) {
   const [matchStatus, setMatchStatus] = useState(props.matchStatus || 1);
   const [day, setDay] = useState(null);
   const [teamsImage, setTeamsImage] = useState(null);
+  const [LoginPopupStatus, setLoginPopupStatus] = useState(false);
 
+  const authStatus = useSelector((state) => state.auth.login);
   const dispatch = useDispatch();
 
   const feedShowPopupStatus = useSelector(
@@ -22,7 +25,11 @@ function Matchcard({ matchId }) {
   );
 
   const feedShowPopupHandler = (popup, matchId) => {
-    dispatch(feedShowPopup({ popup, matchId }));
+    if (authStatus) {
+      dispatch(feedShowPopup({ popup, matchId }));
+    } else {
+      setLoginPopupStatus(true);
+    }
   };
 
   function dateConvertToDay(date) {
@@ -143,6 +150,9 @@ function Matchcard({ matchId }) {
         }
         if (feedShowPopupStatus) {
           return <Players matchId={matchId} questionId={feedShowPopupStatus} />;
+        }
+        if (LoginPopupStatus) {
+          return <LoginPopup setLoginPopupStatus={setLoginPopupStatus} />;
         }
         return null;
       })()}

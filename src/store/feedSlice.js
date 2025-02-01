@@ -18,9 +18,12 @@ const feedSlice = createSlice({
       state.feedShowPopup = action.payload;
       state.popupMatchId = action.payload.matchId;
     },
+    feedReset: (state) => {
+      state.feedData = null;
+    },
   },
 });
 
-export const { feedDispatch, feedShowPopup } = feedSlice.actions;
+export const { feedDispatch, feedShowPopup, feedReset } = feedSlice.actions;
 
 export default feedSlice.reducer;

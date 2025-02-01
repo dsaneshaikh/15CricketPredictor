@@ -3,11 +3,18 @@ import conf from "../conf/conf";
 import Button from "./Button";
 import { useDispatch } from "react-redux";
 import { logout } from "../store/authSlice";
+import { feedReset } from "../store/feedSlice";
+import { predictionReset } from "../store/predictionSlice";
 function LogoutButton() {
   const dispatch = useDispatch();
 
   const logoutHandler = () => {
     dispatch(logout());
+    dispatch(predictionReset());
+    document.cookie =
+      "CricPred_101=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
+    document.cookie =
+      "CricPred_111=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
   };
 
   return (
