@@ -2,14 +2,16 @@ import React from "react";
 import conf from "../conf/conf";
 import Button from "./Button";
 import { useDispatch } from "react-redux";
-import { showPopup, loginStep } from "../store/authSlice";
+import { showPopup, loginStep, showHamMenu } from "../store/authSlice";
 
 function LoginButton() {
   const dispatch = useDispatch();
 
   return (
     <div
-      onClick={() => dispatch(showPopup())}
+      onClick={() => {
+        dispatch(showPopup());
+      }}
       className="flex items-center gap-2 cursor-pointer "
     >
       <img

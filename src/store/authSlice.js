@@ -6,6 +6,7 @@ const initialState = {
   loginStep: 0,
   email: "",
   userData: null,
+  hamMenu: false,
 };
 
 const authSlice = createSlice({
@@ -25,6 +26,9 @@ const authSlice = createSlice({
       state.showPopup = !state.showPopup;
     },
 
+    showHamMenu: (state) => {
+      state.hamMenu = !state.hamMenu;
+    },
     loginStep: (state, action) => {
       if (action.payload) {
         state.loginStep += 1;
@@ -39,6 +43,7 @@ const authSlice = createSlice({
   },
 });
 
-export const { login, logout, showPopup, loginStep, email } = authSlice.actions;
+export const { login, logout, showPopup, loginStep, email, showHamMenu } =
+  authSlice.actions;
 
 export default authSlice.reducer;
